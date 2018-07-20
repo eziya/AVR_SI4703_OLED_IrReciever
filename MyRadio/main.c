@@ -36,7 +36,7 @@ void HandleIRCommand();
 void IrRcvCallback(uint32_t code);
 
 int main(void)
-{	
+{
 	IR_Init(IrRcvCallback);
 	u8g_InitI2C(&u8g, &u8g_dev_ssd1306_128x64_i2c, U8G_I2C_OPT_NONE);
 	
@@ -44,19 +44,19 @@ int main(void)
 	{
 		err = true;
 	}
-		
+	
 	if(!SI4703_SetFreq(PRESET1))
 	{
 		err = true;
 	}
-		
-	SI4703_UpdateRadioInfo();	
+	
+	SI4703_UpdateRadioInfo();
 	
 	/* Replace with your application code */
 	while (1)
-	{		
-		 HandleOLED();
-		 HandleIRCommand();
+	{
+		HandleOLED();
+		HandleIRCommand();
 	}
 }
 
@@ -77,13 +77,12 @@ void HandleOLED()
 		//STERO, MONO indicator
 		memset(OledMsg, 0, 20);
 		sprintf(OledMsg, "%s", radioInfo.Mono? "MONO" : "STEREO");
-		u8g_SetFont(&u8g, u8g_font_helvB08);
+		u8g_SetFont(&u8g, u8g_font_helvB08r);
 		u8g_DrawStr(&u8g, 5, 14, OledMsg);
 		
 		//SIG indicator
 		memset(OledMsg, 0, 20);
 		sprintf(OledMsg, "SIG:%02d", radioInfo.RSSI);
-		u8g_SetFont(&u8g, u8g_font_helvB08);
 		u8g_DrawStr(&u8g, 85, 14, OledMsg);
 		
 		//MUTE & ERROR indicator
@@ -98,19 +97,17 @@ void HandleOLED()
 			sprintf(OledMsg, "%s", radioInfo.DSmute ? "MUTE" : "");
 		}
 		
-		u8g_SetFont(&u8g, u8g_font_helvB08);
 		u8g_DrawStr(&u8g, 5, 57, OledMsg);
 		
 		//VOLUME indicator
 		memset(OledMsg, 0, 20);
 		sprintf(OledMsg, "VOL:%02d", radioInfo.Volume);
-		u8g_SetFont(&u8g, u8g_font_helvB08);
 		u8g_DrawStr(&u8g, 85, 57, OledMsg);
 		
 		//FREQ indicator
 		memset(OledMsg, 0, 20);
 		sprintf(OledMsg, "%5.1fMHz", SI4703_GetFreq());
-		u8g_SetFont(&u8g, u8g_font_helvB14);
+		u8g_SetFont(&u8g, u8g_font_helvB14r);
 		u8g_DrawStr(&u8g, 25, 38, OledMsg);
 		
 	} while ( u8g_NextPage(&u8g) );
@@ -119,7 +116,7 @@ void HandleOLED()
 void HandleIRCommand()
 {
 	/* Check IR receive flag */
-	if(!irRcv) return;	
+	if(!irRcv) return;
 	
 	/* Toggle flag */
 	irRcv = false;
@@ -162,14 +159,15 @@ void HandleIRCommand()
 		break;
 		default:
 		err = true;
-		break;
-	}	
+		return;
+	}
 	
-	SI4703_UpdateRadioInfo();		
+	SI4703_UpdateRadioInfo();
+	
 }
 
 void IrRcvCallback(uint32_t code)
-{			
+{
 	/* Ignore duplicated code */
 	if(irRcv || !code) return;
 	

@@ -7,7 +7,6 @@
 
 #include <avr/interrupt.h>
 #include "IrReceiver.h"
-#include "328P_USART.h"
 
 static volatile uint32_t IR_RcvData;
 static volatile uint8_t RcvBits;
